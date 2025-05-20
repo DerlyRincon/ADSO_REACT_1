@@ -6,10 +6,11 @@ import { Grid } from '@mui/material';
 
 interface Usuario {
   id: number| null;
-  idusuario: number;
+  idaprendiz: number;
   nombre: string;
   apellido: string;
   email: string;
+  telefono: string;
 }
 
 
@@ -17,18 +18,19 @@ const Inicio = () => {
     
     const [dataUsers,setDataUsers] = React.useState<Usuario[]>([]);
     React.useEffect(() => {
-        fetch('http://localhost:8000/usuarios')
+        fetch('http://localhost:8000/aprendiz')
         .then(response=>response.json())
-        .then(dataResponse=>setDataUsers(dataResponse.data.map((row:{idusuario:any})=>({...row,id:row.idusuario}))))
+        .then(dataResponse=>setDataUsers(dataResponse.data.map((row:{idaprendiz:any})=>({...row,id:row.idaprendiz}))))
         .catch(error => console.error('Error al obtener los datos:', error));
         
     },[]);
 
     const columns:GridColDef[] = [
-        {field: "idusuario", headerName: "#", width: 70},
+        {field: "idaprendiz", headerName: "#", width: 70},
         {field: "nombre", headerName: "Nombres", width: 146},
         {field: "apellido", headerName: "Apellidos", width: 146},
         {field: "email", headerName: "Email",width: 200},
+        {field: "telefono", headerName: "Teléfono", width: 200},
     ]
 
     const handleEdit = (row:Usuario)=>{
