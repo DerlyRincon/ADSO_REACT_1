@@ -17,6 +17,7 @@ const navItems = [
     { text: "Inicio", path: "/" , icon: <HomeIcon sx={{color: '#fff'}}/>},
     { text: "Quienes Somos", path: "/about", icon: <InfoIcon sx={{color: '#fff'}}/> },
     { text: "Contactanos", path: "/contact", icon: <ContactMailIcon sx={{color: '#fff'}}/> },
+    { text: "Formulario", path: "/formulariousuario", icon: <ContactMailIcon sx={{color: '#fff'}}/> },
 ]
 
 

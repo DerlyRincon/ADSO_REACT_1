@@ -5,6 +5,7 @@ import Inicio from './pages/inicio';
 import QuienesSomos from './pages/quienesSomos';
 import Contacto from './pages/contactanos';
 import Error404 from './pages/404';
+import Formulario from './pages/Formulario';
 
 function App() {
 
@@ -35,6 +36,7 @@ function App() {
         <Route path="/about" element={<QuienesSomos />} />
         <Route path="/contact" element={<Contacto />} />
         <Route path="/*" element={<Error404 />} />
+        <Route path="formulariousuario" element={<Formulario/>} />
       </Routes>
     </Router>
   
