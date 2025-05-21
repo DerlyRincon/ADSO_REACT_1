@@ -1,5 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import * as React from 'react';
+import Alert from '@mui/material/Alert';
 import {
   Box,
   Button,
@@ -9,174 +11,158 @@ import {
   DialogActions,
   TextField,
   Stack,
+  Snackbar,
 } from '@mui/material';
-import type { GridColDef } from '@mui/x-data-grid';
-import DinamicTable from '../components/DinamicTable';
 
-interface Formulario {
-  id: number | null;
-  idusuario: number;
+interface Aprendiz {
+  idaprendiz: number;
   nombre: string;
   apellido: string;
   email: string;
+  telefono: string;
 }
 
-const Formulario = () => {
-  const [dataUsers, setDataUsers] = React.useState<Formulario[]>([]);
-  const [open, setOpen] = React.useState(false);
+interface ModalDinamicaProps {
+  open: boolean;
+  onClose: () => void;
+  opcion: number;
+  objAprendiz: Aprendiz | null;
+}
 
-  const [formulario, setFormulario] = React.useState<Formulario>({
-    id: null,
-    idusuario: 0,
+const ModalDinamica: React.FC<ModalDinamicaProps> = ({ open, onClose, opcion, objAprendiz }) => {
+  const [aprendiz, setAprendiz] = React.useState<Aprendiz>({
+    
+    idaprendiz: 0,
     nombre: '',
     apellido: '',
     email: '',
+    telefono: '',
   });
 
-  // Obtener los usuarios desde la API
-  const fetchUsuarios = () => {
-    fetch('http://localhost:8000/usuarios')
-      .then(response => response.json())
-      .then(dataResponse =>
-        setDataUsers(
-          dataResponse.data.map((row: { idusuario: any }) => ({
-            ...row,
-            id: row.idusuario,
-          }))
-        )
-      )
-      .catch(error => console.error('Error al obtener los datos:', error));
-  };
+  const [alerta, setAlerta] = React.useState<{ tipo: 'success' | 'error'; mensaje: string } | null>(null);
 
-  React.useEffect(() => {
-    fetchUsuarios();
-  }, []);
-
-  // Columnas para la tabla
-  const columns: GridColDef[] = [
-    { field: 'idusuario', headerName: '#', width: 70 },
-    { field: 'nombre', headerName: 'Nombres', width: 146 },
-    { field: 'apellido', headerName: 'Apellidos', width: 146 },
-    { field: 'email', headerName: 'Email', width: 200 },
-  ];
-
-  // Abrir modal
-  const handleOpen = () => {
-    setFormulario({
-      id: null,
-      idusuario: 0,
+  const limpiarCampos = () => {
+    setAprendiz({
+      idaprendiz: 0,
       nombre: '',
       apellido: '',
       email: '',
+      telefono: '',
     });
-    setOpen(true);
   };
 
-  // Cerrar modal
-  const handleClose = () => setOpen(false);
+  React.useEffect(() => {
+    if (objAprendiz !== null) {
+      setAprendiz({
+        idaprendiz: objAprendiz.idaprendiz,
+        nombre: objAprendiz.nombre,
+        apellido: objAprendiz.apellido,
+        email: objAprendiz.email,
+        telefono: objAprendiz.telefono,
+      });
+    } else {
+      limpiarCampos();
+    }
+  }, [objAprendiz]);
 
-  // Agregar usuario
-  const handleSubmit = (e: React.FormEvent) => {
+  const AccionUsuario = (e: React.FormEvent) => {
     e.preventDefault();
-    fetch('http://localhost:8000/usuarios', {
-      method: 'POST',
+
+    const metodo = opcion === 1 ? 'POST' : 'PUT';
+    const url = `http://localhost:8000/aprendiz`;
+    
+
+    fetch(url, {
+      method: metodo,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formulario),
+      body: JSON.stringify(aprendiz),
     })
-      .then(res => res.json())
-      .then(() => {
-        fetchUsuarios();
-        setOpen(false);
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Error en la solicitud');
+        }
+        return res.json();
       })
-      .catch(error => console.error('Error al registrar usuario:', error));
-  };
-
-  // Editar (por ahora solo imprime)
-  const handleEdit = (row: Formulario) => {
-    console.log('Editar usuario:', row);
-  };
-
-  // Eliminar (por ahora solo imprime)
-  const handleDelete = (id: number) => {
-    console.log('Eliminar usuario con ID:', id);
+      .then(() => {
+        setAlerta({
+          tipo: 'success',
+          mensaje: opcion === 1 ? 'Aprendiz registrado' : 'Aprendiz actualizado',
+        });
+        setTimeout(() => {
+          onClose();
+          window.location.reload();
+        }, 2000);
+      })
+      .catch((error) => {
+        console.error('Error al procesar la solicitud:', error);
+        setAlerta({
+          tipo: 'error',
+          mensaje: opcion === 1 ? 'Error al registrar aprendiz.' : `Error al editar aprendiz. ${error}`,
+        });
+      });
   };
 
   return (
     <>
-      <Box mt={5}>
-        <Stack spacing={2}>
-          <Box>
-            <Button variant="contained" color="primary" onClick={handleOpen}>
-              Agregar Usuario
-            </Button>
-          </Box>
-          <Box>
-            <DinamicTable
-              rows={dataUsers}
-              columns={columns}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          </Box>
-        </Stack>
-      </Box>
-
-      {/* Modal con formulario */}
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-        <DialogTitle>Registrar Nuevo Usuario</DialogTitle>
-        <form onSubmit={handleSubmit}>
+      <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+        <DialogTitle>{opcion === 1 ? 'Agregar Aprendiz' : 'Editar Aprendiz'}</DialogTitle>
+        <form onSubmit={AccionUsuario}>
           <DialogContent>
             <TextField
-              label="ID Usuario"
-              type="number"
-              fullWidth
-              margin="normal"
-              value={formulario.idusuario}
-              onChange={(e) =>
-                setFormulario({ ...formulario, idusuario: Number(e.target.value) })
-              }
-            />
-            <TextField
               label="Nombre"
+              onChange={(e) => setAprendiz({ ...aprendiz, nombre: e.target.value })}
               fullWidth
               margin="normal"
-              value={formulario.nombre}
-              onChange={(e) =>
-                setFormulario({ ...formulario, nombre: e.target.value })
-              }
+              value={aprendiz.nombre}
             />
             <TextField
               label="Apellido"
+              onChange={(e) => setAprendiz({ ...aprendiz, apellido: e.target.value })}
               fullWidth
               margin="normal"
-              value={formulario.apellido}
-              onChange={(e) =>
-                setFormulario({ ...formulario, apellido: e.target.value })
-              }
+              value={aprendiz.apellido}
             />
             <TextField
               label="Email"
               type="email"
+              onChange={(e) => setAprendiz({ ...aprendiz, email: e.target.value })}
               fullWidth
               margin="normal"
-              value={formulario.email}
-              onChange={(e) =>
-                setFormulario({ ...formulario, email: e.target.value })
-              }
+              value={aprendiz.email}
+            />
+            <TextField
+              label="Teléfono"
+              type="tel"
+              onChange={(e) => setAprendiz({ ...aprendiz, telefono: e.target.value })}
+              fullWidth
+              margin="normal"
+              value={aprendiz.telefono}
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} color="secondary">
+            <Button onClick={onClose} color="secondary">
               Cancelar
             </Button>
             <Button type="submit" variant="contained" color="primary">
-              Guardar
+              Terminar
             </Button>
           </DialogActions>
         </form>
       </Dialog>
+      <Snackbar
+        open={alerta !== null}
+        autoHideDuration={1500}
+        onClose={() => setAlerta(null)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+     
+          <Alert onClose={() => setAlerta(null)} severity={alerta?.tipo} variant="filled" sx={{ width: '100%' }}>
+            {alerta?.mensaje}
+          </Alert>
+      
+      </Snackbar>
     </>
   );
 };
 
-export default Formulario;
+export default ModalDinamica;

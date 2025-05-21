@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import {DataGrid, type GridRowsProp, type  GridColDef } from '@mui/x-data-grid';
 import {Paper, IconButton} from '@mui/material';
@@ -47,7 +49,6 @@ const DinamicTable:React.FC<DinamicTableProps>=({rows,columns,onEdit,onDelete})=
     ]
 
 const paginationModel ={page:0, pageSize: 8};
-
 
     return(
        

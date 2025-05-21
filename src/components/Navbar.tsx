@@ -1,4 +1,4 @@
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AppBar, Box, Toolbar, IconButton, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import Drawer from "@mui/material/Drawer";
@@ -14,10 +14,10 @@ import { useState } from "react";
 
 
 const navItems = [
-    { text: "Inicio", path: "/" , icon: <HomeIcon sx={{color: '#fff'}}/>},
-    { text: "Quienes Somos", path: "/about", icon: <InfoIcon sx={{color: '#fff'}}/> },
-    { text: "Contactanos", path: "/contact", icon: <ContactMailIcon sx={{color: '#fff'}}/> },
-    { text: "Formulario", path: "/formulariousuario", icon: <ContactMailIcon sx={{color: '#fff'}}/> },
+    { text: "Inicio", path: "/", icon: <HomeIcon sx={{ color: '#fff' }} /> },
+    { text: "Quienes Somos", path: "/about", icon: <InfoIcon sx={{ color: '#fff' }} /> },
+    { text: "Contactanos", path: "/contact", icon: <ContactMailIcon sx={{ color: '#fff' }} /> },
+    { text: "Formulario", path: "/formulariousuario", icon: <ContactMailIcon sx={{ color: '#fff' }} /> },
 ]
 
 
@@ -29,9 +29,9 @@ const Navbar = () => {
     }
 
     const drawer = (
-        <Box onClick = {handleDrawerToggle} sx = {{ textAlign: 'center', backgroundColor: '#1e1e1e', height: '100%'}}>
-            <Typography variant="h6" sx = {{my: 2, color: '#fff'}}>Mi Sitio Web</Typography>
-            
+        <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center', backgroundColor: '#1e1e1e', height: '100%' }}>
+            <Typography variant="h6" sx={{ my: 2, color: '#fff' }}>Mi Sitio Web</Typography>
+
             <List>
                 {navItems.map((item) => (
                     <ListItem key={item.text} disablePadding>
@@ -45,10 +45,10 @@ const Navbar = () => {
                                 gap: '8px',
                                 color: '#fff',
                                 width: '100%',
-                            }}        
+                            }}
                         >
-                            {item.icon} 
-                            <ListItemText primary = {item.text}/> 
+                            {item.icon}
+                            <ListItemText primary={item.text} />
                         </Link>
                     </ListItem>
                 ))}
@@ -59,19 +59,23 @@ const Navbar = () => {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar sx={{width: '100%', backgroundColor: '#1e1e1e'}}>
+
+            {/* Menu para pantallas grandes */}
+            <AppBar sx={{ width: '100%', backgroundColor: '#1e1e1e' }}>
                 <Toolbar>
-                    <IconButton  color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2, display: {sm:'none'} }}><MenuIcon /></IconButton>
+                    <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ mr: 2, display: { sm: 'none' } }}><MenuIcon /></IconButton>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>Mi Sitio Web </Typography>
                     <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 2 }}>
-                                {navItems.map((item) => (
-                                    <Button key={item.text} 
-                                    component={Link} 
-                                    to={item.path} 
-                                    startIcon={item.icon} 
-                                    sx={{ color: '#fff', 
-                                    textTransform: 'none', 
-                                    '&:hover':{backgroundColor: '#333',             
+                        {navItems.map((item) => (
+                            <Button key={item.text}
+                                component={Link}
+                                to={item.path}
+                                startIcon={item.icon}
+                                sx={{
+                                    color: '#fff',
+                                    textTransform: 'none',
+                                    '&:hover': {
+                                        backgroundColor: '#333',
                                     },
                                 }}
                             >{item.text}</Button>
@@ -79,6 +83,8 @@ const Navbar = () => {
                     </Box>
                 </Toolbar>
             </AppBar>
+
+
             {/* Menu para moviles */}
             <Drawer
                 anchor="left"
@@ -88,7 +94,7 @@ const Navbar = () => {
                     keepMounted: true,
                 }}
                 sx={{
-                    display:{xs:'block', sm: 'none'},
+                    display: { xs: 'block', sm: 'none' },
                     '& .MuiDrawer-paper': {
                         boxSizing: 'border-box',
                         width: 240,
